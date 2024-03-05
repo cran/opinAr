@@ -1,0 +1,162 @@
+---
+title: "Cálculos (Computation)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Cálculos (Computation)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+
+```r
+library(opinAr)
+```
+
+El Índice de Confianza en el Gobierno (ICG) se calcula a partir de 5 dimensiones, cada una de las cuales intenta captar lo que los ciudadanos piensan respecto a aspectos esenciales del gobierno nacional. El índice tiene un valor comprendido entre un mínimo de 0 y un máximo de 5. Para obtener el ICG con la base cruda, hay que calcular el promedio de la columna `icg` ponderada por `ponderacion_utdt`.
+
+(*The ICG has 5 dimensions and each one tries to reflect what is thought about main aspects of the national government. The Index is a value between 0 and 5. The ICG is obtained calculating the mean of the `icg` column weighted with using the `ponderacion_utdt` variable:*).
+
+$$
+\frac{\sum icg*ponderacion\_utdt} { \sum ponderacion\_utdt }
+$$
+
+El mismo cálculo aplica para cada una de las dimensiones del ICG, considerando la variable recodificada de la dimensión correspondiente (tiene valor 0 o 5). Por ejemplo, para computar el resultado de la dimensión 'evaluación general del gobierno', se debe usar 'eval_gob_rec'.
+
+(*For computing the result for each dimension of the ICG, it must be applied the same calculation as before but with the recoded variable (value 0 or 5). For example, to compute the result of 'evaluación general del gobierno (eval_gob)', it must be used 'eval_gob_rec'*).
+
+$$
+\frac{\sum eval\_gob\_rec*ponderacion\_utdt} { \sum ponderacion\_utdt }
+$$
+
+### compute_icg()
+
+Calcula el ICG de cada ola (una por cada mes desde noviembre del 2001\
+\
+(*Computes the ICG for each wave one per month since november 2001*).
+
+-   El parámetro `wave` permite calcularlo para las distintas olas de la `data`\
+    \
+    ( *wave parameter allos wto compute icg for different waves along the period*).
+
+-   el parámetro `segment_by` calcularlo según distintas segmentaciones de la `data` tales como el sexo, edad, situación económica o nivel educativo\
+    \
+    (*parameter `segment_by` allows computations for different segments in `data` such as sex, age, education level or economic condition*)
+
+------------------------------------------------------------------------
+
+### Ejemplo (*Example*)
+
+El cálculo se realizará con los datos previamente descargados con `get_icg_raw()`.
+
+La función `compute_icg()` tiene:
+
+-   un parámetro `wave` para elegir el número de ola;
+
+-   un parámetro *`segment_by`* para elegir la variable de segmentación
+
+(*The calculation will be done based on the downloaded data with `get_icg_raw()`. The `compute_icg()` function has a parameter to choose the wave and other to choose the segmentation variable*)
+
+**Cálculo simple: `icg` para toda la base de datos**
+
+
+```r
+  
+  # donwnload data 
+ 
+(opinAr::get_icg_raw() -> icg_data)
+#> # A tibble: 281,786 × 33
+#>      ola  caso  anio   mes   dia ciudad  zona    region sexo    edad    edu     educacion
+#>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl+l> <dbl+l>  <dbl> <dbl+l> <dbl+l> <dbl+l> <dbl+lbl>
+#>  1   507     1  2002     4    NA 0 [GBA] 2 [BsA…     NA 0 [Muj… 3 [más… 1 [Pri… 3 [PrimC…
+#>  2   507     2  2002     4    NA 0 [GBA] 2 [BsA…     NA 0 [Muj… 3 [más… 3 [Ter… 7 [TercC…
+#>  3   507     3  2002     4    NA 0 [GBA] 2 [BsA…     NA 0 [Muj… 2 [30a… 2 [Sec… 5 [Secun…
+#>  4   507     4  2002     4    NA 0 [GBA] 2 [BsA…     NA 0 [Muj… 3 [más… 1 [Pri… 3 [PrimC…
+#>  5   507     5  2002     4    NA 0 [GBA] 2 [BsA…     NA 0 [Muj… 2 [30a… 3 [Ter… 9 [UnivC…
+#>  6   507     6  2002     4    NA 0 [GBA] 2 [BsA…     NA 0 [Muj… 2 [30a… 3 [Ter… 7 [TercC…
+#>  7   507     7  2002     4    NA 0 [GBA] 2 [BsA…     NA 1 [Hom… 1 [18a… 3 [Ter… 8 [UnivI…
+#>  8   507     8  2002     4    NA 0 [GBA] 2 [BsA…     NA 1 [Hom… 3 [más… 1 [Pri… 3 [PrimC…
+#>  9   507     9  2002     4    NA 0 [GBA] 2 [BsA…     NA 1 [Hom… 1 [18a… 2 [Sec… 4 [Secun…
+#> 10   507    10  2002     4    NA 0 [GBA] 2 [BsA…     NA 0 [Muj… 2 [30a… 3 [Ter… 7 [TercC…
+#> # ℹ 281,776 more rows
+#> # ℹ 21 more variables: sit_ec <dbl+lbl>, sit_fu <dbl+lbl>, sitec <dbl+lbl>,
+#> #   mejora <dbl+lbl>, eval_gob <dbl+lbl>, eval_gob_rec <dbl>, benef_gob <dbl+lbl>,
+#> #   benef_gob_rec <dbl>, adm_gp <dbl+lbl>, adm_gp_rec <dbl>, cor_gob <dbl+lbl>,
+#> #   cor_gob_rec <dbl>, resol_prob <dbl+lbl>, resol_prob_rec <dbl>, icg <dbl>,
+#> #   edad2 <dbl>, tipo_telef <dbl+lbl>, habitat <dbl+lbl>, region_2 <dbl+lbl>,
+#> #   zonacaba <dbl>, ponderacion_utdt <dbl>
+ 
+ # compute ICG
+ 
+opinAr::compute_icg(data = icg_data)
+#> # A tibble: 266 × 7
+#>      ola   icg eval_gob_rec benef_gob_rec adm_gp_rec cor_gob_rec resol_prob_rec
+#>    <dbl> <dbl>        <dbl>         <dbl>      <dbl>       <dbl>          <dbl>
+#>  1   502  1.04         0.4           0.82       0.5         1.99           1.47
+#>  2   503  0.76         0.19          0.66       0.36        1.46           1.12
+#>  3   504  1.36         0.91          1.37       0.44        1.13           2.94
+#>  4   505  0.98         0.52          0.94       0.31        1.11           2.03
+#>  5   506  0.86         0.42          0.59       0.47        1.07           1.76
+#>  6   507  0.78         0.23          0.58       0.33        1.09           1.7 
+#>  7   508  0.47         0.16          0.39       0.07        0.77           0.93
+#>  8   509  0.48         0.19          0.38       0.21        0.82           0.81
+#>  9   510  0.4          0.09          0.39       0.21        0.73           0.59
+#> 10   511  0.43         0.09          0.37       0.24        0.69           0.74
+#> # ℹ 256 more rows
+```
+
+**Cálculo segmentado: `icg` con apertura por género**
+
+
+```r
+  
+
+ ###  ICG by gender
+ 
+   opinAr::compute_icg(data = icg_data , segment_by = sexo)
+#> # A tibble: 532 × 8
+#> # Groups:   ola [266]
+#>      ola sexo        icg eval_gob_rec benef_gob_rec adm_gp_rec cor_gob_rec resol_prob_rec
+#>    <dbl> <dbl+lbl> <dbl>        <dbl>         <dbl>      <dbl>       <dbl>          <dbl>
+#>  1   502 0 [Mujer]  0.98         0.44          0.86       0.41        1.78           1.41
+#>  2   502 1 [Hombr…  1.1          0.35          0.78       0.61        2.22           1.53
+#>  3   503 0 [Mujer]  0.68         0.25          0.6        0.29        1.2            1.04
+#>  4   503 1 [Hombr…  0.86         0.13          0.72       0.45        1.78           1.21
+#>  5   504 0 [Mujer]  1.32         0.89          1.18       0.5         1.11           2.9 
+#>  6   504 1 [Hombr…  1.41         0.93          1.65       0.35        1.15           2.99
+#>  7   505 0 [Mujer]  1            0.51          0.98       0.32        1.13           2.06
+#>  8   505 1 [Hombr…  0.96         0.53          0.89       0.31        1.07           2   
+#>  9   506 0 [Mujer]  0.72         0.38          0.61       0.39        0.78           1.46
+#> 10   506 1 [Hombr…  1.03         0.46          0.58       0.56        1.41           2.13
+#> # ℹ 522 more rows
+```
+
+**Cálculo segmentado II: `icg` por calendario**
+
+
+```r
+  
+# Consultamos ID de olas de interés. Por ejemplo de los meses de diciembre durante la presidencia de Mauricio Macri
+
+ opinAr::show_waves(data = icg_data) %>% 
+  dplyr::filter(mes == 12 & (anio >= 2015 & anio < 2019)) # filtramos para obtener número de ola de interes
+#> # A tibble: 4 × 3
+#>     ola   mes  anio
+#>   <dbl> <dbl> <dbl>
+#> 1   671    12  2015
+#> 2   683    12  2016
+#> 3   695    12  2017
+#> 4   707    12  2018
+ 
+ 
+ opinAr::compute_icg(data = icg_data, 
+                      wave = c(671, 683, 695, 707))
+#> # A tibble: 4 × 7
+#>     ola   icg eval_gob_rec benef_gob_rec adm_gp_rec cor_gob_rec resol_prob_rec
+#>   <dbl> <dbl>        <dbl>         <dbl>      <dbl>       <dbl>          <dbl>
+#> 1   671  1.8          1.82          1.77       1.44        2.03           1.93
+#> 2   683  2.49         2.02          2.08       2.1         3.23           3.03
+#> 3   695  2.36         2.11          1.84       1.93        3.18           2.75
+#> 4   707  1.92         1.43          1.58       1.53        2.89           2.2
+```

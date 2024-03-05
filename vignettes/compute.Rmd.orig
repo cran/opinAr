@@ -1,0 +1,107 @@
+---
+title: "Cálculos (Computation)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Cálculos (Computation)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(opinAr)
+```
+
+El Índice de Confianza en el Gobierno (ICG) se calcula a partir de 5 dimensiones, cada una de las cuales intenta captar lo que los ciudadanos piensan respecto a aspectos esenciales del gobierno nacional. El índice tiene un valor comprendido entre un mínimo de 0 y un máximo de 5. Para obtener el ICG con la base cruda, hay que calcular el promedio de la columna `icg` ponderada por `ponderacion_utdt`.
+
+(*The ICG has 5 dimensions and each one tries to reflect what is thought about main aspects of the national government. The Index is a value between 0 and 5. The ICG is obtained calculating the mean of the `icg` column weighted with using the `ponderacion_utdt` variable:*).
+
+$$
+\frac{\sum icg*ponderacion\_utdt} { \sum ponderacion\_utdt }
+$$
+
+El mismo cálculo aplica para cada una de las dimensiones del ICG, considerando la variable recodificada de la dimensión correspondiente (tiene valor 0 o 5). Por ejemplo, para computar el resultado de la dimensión 'evaluación general del gobierno', se debe usar 'eval_gob_rec'.
+
+(*For computing the result for each dimension of the ICG, it must be applied the same calculation as before but with the recoded variable (value 0 or 5). For example, to compute the result of 'evaluación general del gobierno (eval_gob)', it must be used 'eval_gob_rec'*).
+
+$$
+\frac{\sum eval\_gob\_rec*ponderacion\_utdt} { \sum ponderacion\_utdt }
+$$
+
+### compute_icg()
+
+Calcula el ICG de cada ola (una por cada mes desde noviembre del 2001\
+\
+(*Computes the ICG for each wave one per month since november 2001*).
+
+-   El parámetro `wave` permite calcularlo para las distintas olas de la `data`\
+    \
+    ( *wave parameter allos wto compute icg for different waves along the period*).
+
+-   el parámetro `segment_by` calcularlo según distintas segmentaciones de la `data` tales como el sexo, edad, situación económica o nivel educativo\
+    \
+    (*parameter `segment_by` allows computations for different segments in `data` such as sex, age, education level or economic condition*)
+
+------------------------------------------------------------------------
+
+### Ejemplo (*Example*)
+
+El cálculo se realizará con los datos previamente descargados con `get_icg_raw()`.
+
+La función `compute_icg()` tiene:
+
+-   un parámetro `wave` para elegir el número de ola;
+
+-   un parámetro *`segment_by`* para elegir la variable de segmentación
+
+(*The calculation will be done based on the downloaded data with `get_icg_raw()`. The `compute_icg()` function has a parameter to choose the wave and other to choose the segmentation variable*)
+
+**Cálculo simple: `icg` para toda la base de datos**
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+  
+  # donwnload data 
+ 
+(opinAr::get_icg_raw() -> icg_data)
+ 
+ # compute ICG
+ 
+opinAr::compute_icg(data = icg_data)
+   
+ 
+   
+```
+
+**Cálculo segmentado: `icg` con apertura por género**
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+  
+
+ ###  ICG by gender
+ 
+   opinAr::compute_icg(data = icg_data , segment_by = sexo)
+   
+```
+
+**Cálculo segmentado II: `icg` por calendario**
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+  
+# Consultamos ID de olas de interés. Por ejemplo de los meses de diciembre durante la presidencia de Mauricio Macri
+
+ opinAr::show_waves(data = icg_data) %>% 
+  dplyr::filter(mes == 12 & (anio >= 2015 & anio < 2019)) # filtramos para obtener número de ola de interes
+ 
+ 
+ opinAr::compute_icg(data = icg_data, 
+                      wave = c(671, 683, 695, 707))
+ 
+ 
+   
+```

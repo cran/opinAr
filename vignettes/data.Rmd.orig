@@ -1,0 +1,120 @@
+---
+title: "Data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## DATOS (*Data*)
+
+El ICG se obtiene de una encuesta mensual y se compone de 5 dimensiones basadas en las siguientes preguntas (*ICG is calculated based on a monthly survey. Its 5 dimensions come from the following questions* ):
+
+-   **`eval_gob`**: ¿Cómo evalúa usted al gobierno nacional en términos de muy bien, bien, regular, mal, o muy mal?: **1** Muy bien; **2** Bien; **3** Regular; **4** Mal; **5** Muy mal; **6** Ns/ nc\
+    \
+    (*How do you evaluate to the national government in terms of very good, good, regular, bad, very bad? : **1**; Very good; **2** Good; **3** Regular; **4** Bad; **5** Very bad; **6** Ns/ nc*)
+
+-   **`benef_gob`**: ¿Usted diría que en general, el gobierno nacional actúa pensando en el beneficio de algunos pocos sectores o pensando en el beneficio de la mayoría de la gente?: **1** Sectores; **2** Gente; **3** Otro; **4** Ns nc\
+    \
+    (*In general terms, the government acts for the benefit of some sectors or for the benefit of most of the people? : **1** Sectors; **2** People; **3** Another; **4** Ns/ nc*)
+
+-   **`adm_gp`**: ¿Usted diría que en general, el gobierno nacional administra el gasto público con eficiencia, con cierta eficiencia, con un poco de ineficiencia o muy ineficientemente?: **1** Eficiencia; **2** Cierta eficiencia; **3** Un poco de ineficiencia; **4** Muy ineficientemente; **5** Ns nc.\
+    \
+    (*In general, the national government administers the public spending efficiently, quite efficiently, quite inefficiently, very inefficiently? : **1** efficiently; **2** quite efficiently; **3** quite inefficiently; **4** very inefficiently; **5** Ns/nc*)
+
+-   **`cor_gob`**: ¿Usted diría que de las personas que forman el gobierno nacional la mayoría son corruptas, que unos pocos son corruptos, o que casi ninguno es corrupto?: **1** La mayoría son corruptas; **2** Unos pocos son corruptos; **3** Casi ninguno es corrupto; **4** Ns nc\
+    \
+    (*Do you think that people in charge of the national government are mostly corrupt, a few are corrupt or that almost no one is corrupt? : **1** Most of them are corrupt; **2** A few of them are corrupt; **3** Almost no one of them are corrupt; **4** Ns/nc*)
+
+-   **`resol_prob`**: ¿Cuál de las siguientes frases se acerca más a lo que usted piensa?: **1** Este gobierno está resolviendo los problemas del país; **2** Este gobierno sabe cómo resolver los problemas del país pero necesita tiempo; **3** Este gobierno no sabe cómo resolver los problemas del país; **4** Ns nc\
+    \
+    (*Which of the following sentences is closer to your opinion?: **1** This government is solving the country's problems; **2** This government knows how to solve the country's problems but needs time; **3** This government doesn't know how to solve the country's problems; **4** Ns/nc*)
+
+### Segmentos (*segemnts*)
+
+El ICG puede calcularse segmentado por las variables `zona`, `edad`, `sexo`, `edu`, `sit_ec` basadas en las siguientes preguntas (*ICG can be segmented by the variables `zona`, `edad`, `sexo`, `edu`, `sit_ec` that come from the following questions* ):
+
+-   **`zona`**: ¿Podría decirme en qué provincia o ciudad vive usted?: 1 Ciudad de Buenos Aires 2 Provincia de Buenos Aires 3 Interior (*Could you tell me in which district or city do you live?: 1 Ciudad de Buenos Aires 2 Provincia de Buenos Aires 3 Interior*)
+
+-   **`edad`**: ¿Podría decirme su edad?: 1 18 a 29 2 30 a 49 3 50 o más (*Could you tell me your age? : 1 18-29 2 30-49 3 50 or more*)
+
+-   **`sexo`**: ¿De qué sexo es?: 0 Femenino 1 Masculino (*Which is your sex?: 0 female 1 male*)
+
+-   **`edu`**: Variable que indica el máximo nivel educativo alcanzado en tres niveles. Los valores de la variable son: 1 Primario 2 Secundario 3 Terciario/Universitario (*Highest educational level achieved. Possible values are: 1. Elementary School 2. High School 3. College*)
+
+-   **`sit_ec`**: ¿Cómo cree que será la situación económica del país dentro de un año: mejor, igual o peor que la actual?: 1 Mejor 2 Igual 3 Peor 4 Ns (*How do you think the economic situation of the country will be within a year: 1 Better 2 The same 3 Worse 4 DN*)
+
+### Libro de Códigos *(codebook*)
+
+-   **`show_codebook()`**: Libro de código de variables para calcular el ICG y variables para segmentarlo. El parámetro `viewer = TRUE` habilita una tabla en el *Viewer* de `RStudio`\
+    \
+    (*Codebook of variables to calculate ICG and variables to segment it. The `viewer = TRUE` parameter enables a table in the Viewer* of `RStudio`).
+
+### Explorar Olas (*explore waves*)
+
+-   **`show_waves()`**: Imprime en número de ola y el mes y año correspondiente. El parámetro `viewer = TRUE` habilita una tabla en el *Viewer* de `RStudio`\
+    \
+    (*Prints the number of wave and the corresponding month and year. The `viewer = TRUE` parameter enables a table in the Viewer* of`RStudio`).
+
+### Obtener datos crudos (*get raw data*)
+
+-   **`get_icg_raw()`**: Descarga la base de datos cruda (*Download the raw database*).
+
+## EJEMPLOS (*Examples*)
+
+#### Obtener datos con `get_icg_raw()` (*get data*)
+
+`get_icg_raw()` es la función principal para hacernos de los datos disponibles.
+
+(*`get_icg_raw()` is the main function to get the available data*).
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+library(opinAr)
+
+datos <- get_icg_raw()
+
+datos
+```
+
+#### Explorar el libro de códigos `show_codebook()` (*explore Codebook*)
+
+La función `show_codebook()` muestra el libro de códigos. Por defecto el parámetro `viewer = FALSE` imprime el resultado en consola. Si en cambio escribimos `viewer = TRUE` los datos se presentan en el *Viewer* de `RStudio`.
+
+(*`show_codebook()` function displays the codebook. By default the parameter `viewer = FALSE` prints the result in console. If instead we write `viewer = TRUE` data is presented in the `RStudio` Viewer*).
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+show_codebook()
+
+```
+
+#### Explorar las olas `show_waves()` (*explore waves*)
+
+La función `show_waves()` muestra las olas y el mes y año correspondientes. Por defecto el parámetro `viewer = FALSE` imprime el resultado en consola. Si en cambio escribimos `viewer = TRUE` los datos se presentan en el *Viewer* de `RStudio`.
+
+(*`show_waves()` function displays the number of waves and the corresponding year and month. By default the parameter `viewer = FALSE` prints the result in console. If instead we write `viewer = TRUE` data is presented in the `RStudio` Viewer*).
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+show_waves(datos)
+
+```
+
+## FUENTES (*Sources*)
+
+**Índice de Confianza en el Gobierno. Escuela de Gobierno. Universidad Torcuato Di Tella**
+
+-   Los datos provienen de la las bases en formato `.dta` descargadas de la página de la Escuela de Gobierno de la Universidad Torcuato Di Tella [utdt.edu/icg](https://www.utdt.edu/icg)\
+    \
+    (*Access to raw data comes from databases in `.dta` files of the Escuela de Gobierno de la Universidad Torcuato Di Tella* [utdt.edu/icg](https://www.utdt.edu/icg).
+
+**Para consultas sobre el índice, dirigirse a los profesores Carlos Gervasoni ([cgervasoni\@utdt.edu](mailto:cgervasoni@utdt.edu)) o Javier Zelaznik ([jzelaznik\@utdt.edu](mailto:jzelaznik@utdt.edu))**
